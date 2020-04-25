@@ -1,0 +1,16 @@
+---------------------------------------------------------------------------------------------------------------------------
+Oscar 4/23 - Reading assignment (Thoughts)
+- Will need a scanner in main class that finds ORIGIN or goes next line,
+  eventually reading all inputs until it sees // or hits 60 characters.
+  Shouldn't be too much more than the scanner and some if statements, creating a sequence object? 
+- From what I can understand sequences (length 60) can be broken up into subsequences (length k) 
+  These subsequences are between 1 and 31 in length, characters overlap between subsequences in a sequence. (See 3.2)
+  These subsequences are represented in a long with the characters being 2-bit binary numbers. 
+  Subsequences are stored in TreeObjects, which are what is put into BTreeNodes which make up the BTree of the sequence. 
+- Not sure exactly how to keep the root node in memory using java
+- Also not really sure how to implement an Object Cache so that it improves performance. 
+---------------------------------------------------------------------------------------------------------------------------
+Oscar 4/25 - Weekend work
+- Added name to authors on all files
+- Uploaded test .gbk files to repo
+
