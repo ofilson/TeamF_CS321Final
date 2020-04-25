@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 /**
  * @Test:Testing Class for final project.
  * 
- * @authors Michael Kinsy,   ,    ,   ,
+ * @authors Michael Kinsy, Oscar Filson,    ,   ,
  *
  */
 public class Test {
