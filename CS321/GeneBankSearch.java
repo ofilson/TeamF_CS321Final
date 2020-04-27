@@ -2,7 +2,7 @@ import java.io.File;
 /**
  * @GeneBankSearch:Searches given Btree for DNA sequences of given length.
  * 
- * @authors Michael Kinsy,   ,    ,   ,
+ * @authors Michael Kinsy, Oscar Filson,    ,   ,
  *
  */
 public class GeneBankSearch {
