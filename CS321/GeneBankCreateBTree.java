@@ -2,7 +2,7 @@ import java.io.File;
 /**
  * @GeneBankCreateBTree:creates a BTree from a given GeneBank file.
  * 
- * @authors Michael Kinsy,   ,    ,   ,
+ * @authors Michael Kinsy, Oscar Filson,    ,   ,
  *
  */
 public class GeneBankCreateBTree {
