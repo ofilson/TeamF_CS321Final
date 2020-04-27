@@ -13,4 +13,6 @@ Oscar 4/23 - Reading assignment (Thoughts)
 Oscar 4/25 - Weekend work
 - Added name to authors on all files
 - Uploaded test .gbk files to repo
+- Moved BTree class and BTreeNode class to their own separate file, out of GeneBankCreateBTree.java
+- Wrote Scanner to scan sequence from .gbk files. 
 
