@@ -13,4 +13,17 @@ Oscar 4/23 - Reading assignment (Thoughts)
 Oscar 4/25 - Weekend work
 - Added name to authors on all files
 - Uploaded test .gbk files to repo
-
+- Moved BTree class and BTreeNode class to their own separate file, out of GeneBankCreateBTree.java
+- Wrote Scanner to scan sequence from .gbk files. 
+---------------------------------------------------------------------------------------------------------------------------
+Michael 4/27 -Meeting summary
+-Merged Oscars fork with original Master branch updating Btree files and Scanner implementaion in GeneBankCreateBTree.java
+-Went over next step for the project: Oscar-Continue to further implement subsequencing logic, Michael-Further implement
+BTree, Zahra-Will be going over project spects to find what she'd like to begin on, Dillon- Feel free to do the same as 
+Zahra.
+-Communication will be further pressed through google hangouts group for less critical information and this file for critical
+information pertaining to the direct status of the project, we will also be holding zoom meetings at least once a week as needed
+to merge everyones work to the master Branch in the original repository. 
+-Finally I will be removing the branches I made as there is an issue with accessability so please create forks as oscar did
+for your own personal versions of the current project and so forth. 
+---------------------------------------------------------------------------------------------------------------------------
