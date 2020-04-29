@@ -27,3 +27,19 @@ to merge everyones work to the master Branch in the original repository.
 -Finally I will be removing the branches I made as there is an issue with accessability so please create forks as oscar did
 for your own personal versions of the current project and so forth. 
 ---------------------------------------------------------------------------------------------------------------------------
+Oscar 4/29 - Added long conversion of subsequences
+- Slightly modified BTree to have a placeholder add method I could call from GeneBankCreateBTree.java
+- Modified BTreeNode from original to only have one key, the long, being passed in through the constructor along with the min_degree,
+  as well as giving it left and right child nodes.
+    - Not really sure where we are getting min_degree from
+    - These changes were to make it compatible with the long and the way I am currently envisioning the BTree, not sure if these are
+      correct and feel free to change them if need be, just let me know so I can mess with GeneBankCreateBTree implementation.
+- Added the functionality to GeneBankCreateBTree.java so that it now takes int the full sequence and breaks it down into subsequences
+  of length k. It then converts each character of the subsequence into binary and creates a long, which is made the key of a BTreeNode
+  and added to the BTree. 
+    - The exact implementation could change based on how the BTree ends up being written, currently I just put some placeholders in
+      there. 
+    - I looked into using the Random Access File to read and write the long bits but I couldn't figure out how to do that without
+      making a completely new file, which I don't think is something that this part of the code should do. I think we will need this 
+      however when we are writing to a new file for the btree file and maybe the debugging output. 
+- I want to keep moving on this project so I will be looking for more things to work on this week and over the weekend. 
