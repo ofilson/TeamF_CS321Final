@@ -1,17 +1,16 @@
 
 public class BTreeNode{
     /**@InstanceVariables: for BTreeNodes*/
-    private String[] keys;
-    private int min_degree,  num_keys;
-    private BTreeNode[] Children;
-    private boolean leaf;
+    private long key;
+    private int min_degree;
+    private BTreeNode left;
+    private BTreeNode right;
     
     /**@Constructor: for BTreeNode*/
-    private BTreeNode(int min_degree, boolean leaf) {
+    public BTreeNode(int min_degree, long key) {
         this.min_degree = min_degree;
-        this.leaf = leaf;
-        this.keys = new String[2* min_degree-1];
-        this.Children = new BTreeNode[2* min_degree];
-        this.num_keys = 0;
+        this.key = key;
+        this.right = null;
+        this.left = null;
     }
 }
