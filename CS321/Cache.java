@@ -1,9 +1,9 @@
 import java.util.NoSuchElementException;
 
 
-public class Cache<T>{
+public class Cache{
 	private int size,size2;
-	private IUSingleLinkedList<T> list =null, list2 = null;
+	private IUSingleLinkedList list =null, list2 = null;
 	private int nh1,nr1,nh2,nr2;
 	/**
 	 * @Constructor
@@ -13,7 +13,7 @@ public class Cache<T>{
 		nh1 = 0;
 		nr1 = 0;
 		nh2 = 0; nr2 = 0;
-		this.list = new IUSingleLinkedList<T>();
+		this.list = new IUSingleLinkedList();
 	}
 	
 	public Cache(int size,int size2) throws Exception {
@@ -24,16 +24,16 @@ public class Cache<T>{
 		}
 		this.setSize2(size2);
 		nh1 = 0; nr1 = 0; nh2 = 0; nr2 = 0;
-		this.list = new IUSingleLinkedList<T>();
-		this.list2 = new IUSingleLinkedList<T>();
+		this.list = new IUSingleLinkedList();
+		this.list2 = new IUSingleLinkedList();
 	}
 	
 	/**
 	 * @param Object
 	 * @return Object
 	 */
-	public T getObject(T Object) {
-		T result = this.list.remove(Object);
+	public BTreeNode getObject(BTreeNode Object) {
+		BTreeNode result = this.list.remove(Object);
 		this.nr1++;
 		if(result != null) { //if it hits
 			this.nh1++;
@@ -69,7 +69,7 @@ public class Cache<T>{
 	 * 
 	 * @param Object
 	 */
-	public void removeObject(T Object) {
+	public void removeObject(BTreeNode Object) {
 		if(this.list.isEmpty() && this.list2.isEmpty()) {
 			throw new NoSuchElementException();
 		}
@@ -83,7 +83,7 @@ public class Cache<T>{
 	 * 
 	 * @param object
 	 */
-	public void addObject(T object) {
+	public BTreeNode addObject(BTreeNode object) {
 		if(this.list.size() == size) {
 			this.list.removeLast();
 		}
@@ -94,8 +94,20 @@ public class Cache<T>{
 			}
 			this.list2.addToFront(object);
 		}
+		return object;
 	}
-	
+	 public BTreeNode readNode(int offset) {
+	    	for(int i = 0; i< list.size; i++) {
+	    		if (( list.get(i)).getByteOffset() == offset) {
+	    			list.remove(i);
+	    			list.addObject(list.get(i));
+	    			nh1++;
+	    			return list.get(i);
+	    		}
+	    	}
+	    	nr1++;
+	    	return null;
+	    }
 	/**
 	 * 
 	 */
@@ -155,17 +167,17 @@ public class Cache<T>{
 	 * @param <T>
 	 */
 	@SuppressWarnings("hiding")
-	private class Node<T>{
+	private class Node{
 		// Instance Variables
-		private T element;
-		private Node<T> next;
+		private BTreeNode element;
+		private Node next;
 		/**
 		 * Constructor for node that takes element as parameter, sets nodes element to
 		 * passed element and sets next and previous nodes to null.
 		 * 
 		 * @param element
 		 */
-		private Node(T element) {
+		private Node(BTreeNode element) {
 			this.setElement(element);
 			setNext(null);
 		}
@@ -173,14 +185,14 @@ public class Cache<T>{
 		/**
 		 * @return the element
 		 */
-		private T getElement() {
+		private BTreeNode getElement() {
 			return element;
 		}
 
 		/**
 		 * @param element the element to set
 		 */
-		private void setElement(T element) {
+		private void setElement(BTreeNode element) {
 			this.element = element;
 		}
 
@@ -188,14 +200,14 @@ public class Cache<T>{
 		/**
 		 * @return the next
 		 */
-		private Node<T> getNext() {
+		private Node getNext() {
 			return next;
 		}
 
 		/**
 		 * @param next the next to set
 		 */
-		private void setNext(Node<T> next) {
+		private void setNext(Node next) {
 			this.next = next;
 		}
 	}
@@ -207,8 +219,8 @@ public class Cache<T>{
 	 * @param <T>
 	 */
 	@SuppressWarnings("hiding")
-	private class IUSingleLinkedList<T> {
-		private Node<T> head, tail;
+	private class IUSingleLinkedList {
+		private Node head, tail;
 		private int size;
 		private int modCount;
 		
@@ -220,8 +232,14 @@ public class Cache<T>{
 		}
 		
 		
-		private void addToFront(T element) {
-			Node<T> newNode = new Node<T>(element);
+		public void addObject(BTreeNode bTreeNode) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+		private void addToFront(BTreeNode element) {
+			Node newNode = new Node(element);
 			newNode.setNext(head);
 			head = newNode;
 			if(isEmpty()) {
@@ -232,11 +250,11 @@ public class Cache<T>{
 		}
 
 		
-		private T removeLast() {
+		private BTreeNode removeLast() {
 			if(isEmpty()) {
 				throw new NoSuchElementException();
 			}
-			T retVal = tail.getElement();
+			BTreeNode retVal = tail.getElement();
 			if(size > 1) {
 				remove(indexOf(tail.getElement()));
 			}else {
@@ -249,14 +267,14 @@ public class Cache<T>{
 		}
 
 		
-		private T remove(T element) {
+		private BTreeNode remove(BTreeNode element) {
 			if (isEmpty()) {
 				return null;
 			}
 			
 			boolean found = false;
-			Node<T> previous = null;
-			Node<T> current = head;
+			Node previous = null;
+			Node current = head;
 			
 			while (current != null && !found) {
 				if (element.equals(current.getElement())) {
@@ -289,14 +307,14 @@ public class Cache<T>{
 		}
 
 		
-		private T remove(int index) {
+		private BTreeNode remove(int index) {
 			if(index<0 || index >= size) {
 				throw new IndexOutOfBoundsException();
 			}
 			if(isEmpty()) {
 				throw new NoSuchElementException();
 			}
-			T retVal = null;
+			BTreeNode retVal = null;
 			if(index == 0) {
 				retVal = head.getElement();
 				head = head.getNext();
@@ -304,7 +322,7 @@ public class Cache<T>{
 					tail = null;
 				}
 			}else {
-				Node<T> current = head;
+				Node current = head;
 				for(int i = 0; i < index-1; i++) {
 					current = current.getNext();
 				}
@@ -321,9 +339,9 @@ public class Cache<T>{
 		}
 
 		
-		private int indexOf(T element) {
+		private int indexOf(BTreeNode element) {
 			int index = 0;
-			Node<T> current = head;
+			Node current = head;
 			while(current != null && !current.getElement().equals(element)) {
 				current = current.getNext();
 				index++;
@@ -332,6 +350,21 @@ public class Cache<T>{
 				index = -1;
 			}
 			return index;
+		}
+		
+		public BTreeNode get(int index) {
+		if(index<0 || index >= size) {
+			throw new IndexOutOfBoundsException();
+		}
+		Node current = head;
+		for(int i = 0; i < index; i++) {
+			current = current.getNext();
+		}
+		if(index == size-1) {
+			return current.getElement();
+		}
+		
+			return current.getElement();
 		}
 
 
