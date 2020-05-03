@@ -50,8 +50,7 @@ public class BTree{
         	System.err.println("Error: Occured in I/O in BTree construction");
         }
     }
-    
-    
+
     /**@Constructor: for Creating new BTree given from a existing BTree-filename
      * @param fileName
      */
@@ -395,6 +394,4 @@ public class BTree{
 			}
 		} return result.toString();
 	}
-	
-    
 }
