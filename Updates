@@ -43,3 +43,10 @@ Oscar 4/29 - Added long conversion of subsequences
       making a completely new file, which I don't think is something that this part of the code should do. I think we will need this 
       however when we are writing to a new file for the btree file and maybe the debugging output. 
 - I want to keep moving on this project so I will be looking for more things to work on this week and over the weekend. 
+---------------------------------------------------------------------------------------------------------------------------
+Michael 4/30 -BTree, BTreeNode, BTreeObject, and updated my cache to implement BTreeNodes
+-So I tenatively finished the files above still need further testing,
+-implemented all required methods for files above (I think)
+-implemented I/O for meta data storage with random access file (except due to not having createBTree.java done I'm not sure if my
+data sizes are correct but that should be an easy fix.
+---------------------------------------------------------------------------------------------------------------------------
