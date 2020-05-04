@@ -67,11 +67,13 @@ public class GeneBankCreateBTree {
 							}
 						}
 						line = fileScan.nextLine();
+						lineScan.close();
 					}
 					seqList.add(seq.toString()); //Sequence added to list of sequences.
 					//System.out.println(seq.toString()); //Print for debugging pruposes
 				}
 			}
+			fileScan.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("File Not Found");
 		}
@@ -83,7 +85,7 @@ public class GeneBankCreateBTree {
 			String fullSeq = seqList.get(i);
 			int start = 0; 
 			int finish = seq_length;
-			String fileName = gbkFileName + ".gbk.btree.data" + seq_length + degree;
+			String fileName = gbkFileName + "btree.data" + seq_length + degree;
 			BTree tree = new BTree(degree, fileName); //Make a new BTree
 
 			while(finish < fullSeq.length()) { //This is a big one, increments start and finish by one until we've got subsequences of length m for the whole array
