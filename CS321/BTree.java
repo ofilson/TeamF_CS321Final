@@ -6,7 +6,7 @@ import java.io.RandomAccessFile;
 
 /**
  * Implementation of BTree for CS321 Final
- * @author Michael Kinsy,... ,... ,... ,
+ * @author Michael Kinsy, Oscar Filson ,... ,... ,
  *
  */
 public class BTree{
