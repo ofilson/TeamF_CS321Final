@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.Scanner;
 /**
  * @GeneBankSearch:Searches given Btree for DNA sequences of given length.
  * 
@@ -6,22 +7,80 @@ import java.io.File;
  *
  */
 public class GeneBankSearch {
-	public static void main(String args[]) {
-		//Instance Variables
-		String has_Cache = "", BTreeFileName = "", queryFileName = "", input_cache_size = "", debug_level = "";
-		int cache_size;
-		//Args Parsing
-		has_Cache = args[0]; BTreeFileName = args[1]; 
-		
-		queryFileName = args[2];  input_cache_size = args[3]; 
-		
-		debug_level = args[4];
-		
-		if(has_Cache == "1") {
-			cache_size= Integer.valueOf(input_cache_size);
+	private static boolean useCache = false;
+	private static String btreeFile, queryFile;
+	private static int cacheSize = 0;
+
+	public static void main(String[] args) {
+		String seq = "", deg = "";
+		//verify valid argument length
+		if(args.length < 3 || args.length > 5) {
+			printUsage();
 		}
-	
-		File BTreeFile = new File(BTreeFileName), queryFile = new File(queryFileName);
+
+		if (args[0].equals("1")) {
+			useCache = true; //use BTree with cache
+		} else if (!(args[0].equals("0") || args[0].equals("1"))) {
+			printUsage();
+		} 
+
+		btreeFile = args[1]; //BTree File
+		queryFile = args[2]; //Query File
+
+		if (useCache && args.length >= 4) {
+			cacheSize = Integer.parseInt(args[3]);
+		}
+
+		if(args.length == 5){
+		}
+
+		//Find degree
+		for(int i = btreeFile.length()-1; i >= 0; i--) {
+			if(btreeFile.charAt(i) != '.')
+				deg += btreeFile.charAt(i);
+			else break;
+		}
+		deg = reverseString(deg);
+
+		//Find sequence length
+		for (int i = btreeFile.length()-deg.length()-2; i >= 0; i--) {
+			if(btreeFile.charAt(i) != '.')
+				seq += btreeFile.charAt(i);
+			else break;
+		}
+		seq = reverseString(seq);
+
+		int degree = Integer.parseInt(deg);
 		
+		try {
+			GeneBankConvert gbc = new GeneBankConvert();
+			BTree tree = new BTree(degree, new File(btreeFile), useCache, cacheSize);
+			Scanner scan = new Scanner(new File(queryFile));
+			
+			while(scan.hasNext()) {
+				String query = scan.nextLine(); //what to search for
+				
+				long q = gbc.convertStringToLong(query);
+				BTreeObject result = tree.search(tree.getRoot(), q);
+				
+				if(result != null) 
+					System.out.println(gbc.convertLongToString(result.getData(), Integer.parseInt(seq))+": "+ result.getFreq());
+			}
+			
+			scan.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static String reverseString(String s) {
+		if(s.length() == 1)
+			return s;
+		return "" + s.charAt(s.length() - 1) + reverseString(s.substring(0, s.length() - 1));
+	}
+
+	private static void printUsage() {
+		System.err.println("Usage: java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]\n");
+		System.exit(1); 
 	}
 }
