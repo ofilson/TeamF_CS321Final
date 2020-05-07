@@ -102,16 +102,12 @@ public class GeneBankCreateBTree {
 		BTree tree = new BTree(BTreeDegree, BTreeFile, useCache, cacheSize);
 
 		String line = null;
+
 		line = in.readLine().toLowerCase().trim();
 		boolean inSequence = false;
 		int sequencePosition = 0;
 		int charPosition = 0;
 		long sequence = 0L;
-
-			}
-			line = in.readLine();
-			charPosition = 0;
-		}
 
 		if (debugLevel > 0) {
 			File dumpFile = new File("dump");
@@ -126,7 +122,10 @@ public class GeneBankCreateBTree {
 		in.close();
 	}
 	
-
+	/**
+	 * Called when the arguments do not fit what is expected. 
+	 * Prints out the correct argument usage to the console. 
+	 */
 	private static void badUsage() {
 		System.err.println("Usage: java GeneBankCreateBTree <cache> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
 		System.err.println("<cache>: 0/1 (no cache/cache)");
@@ -137,6 +136,12 @@ public class GeneBankCreateBTree {
 		System.err.println("[<debug level>]: 0/1 (no/yes)");
 		System.exit(1);
 	}
+
+
+	/**
+	 * Calculates the best degree for the BTree 
+	 * @return int, optimum degree for the BTree 
+	 */
 	public static int getOptimalDegree(){
 		double optimum;
 		int sizeOfPointer = 4;
@@ -150,6 +155,7 @@ public class GeneBankCreateBTree {
 		return (int) Math.floor(optimum);
 	}
 }
+
 
 
 
