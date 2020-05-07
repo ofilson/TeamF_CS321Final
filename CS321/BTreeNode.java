@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * has reference to a parent node by a pointer from the parents Integer byteOffset from the RandomAccessFile
  * also has reference to an arraylist of children node pointers same as parent pointer
  * ------------------------
- * @author MichaelKinsy, , , ,
+ * @author MichaelKinsy, Oscar Filson, , ,
  *
  */
 public class BTreeNode{

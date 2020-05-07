@@ -62,6 +62,7 @@ public class GeneBankCreateBTree {
 			badUsage();
 		}
 		
+
 		// cache and debug level
 		int cacheSize = 0;
 		int debugLevel = 0;
@@ -93,6 +94,7 @@ public class GeneBankCreateBTree {
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new FileReader(gbk));
+
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found: " + gbk.getPath());
 		}
@@ -106,46 +108,6 @@ public class GeneBankCreateBTree {
 		int charPosition = 0;
 		long sequence = 0L;
 
-		while (line != null) { 
-			if (inSequence) {
-				if (line.startsWith("//")) { 
-					inSequence = false;
-					sequence = 0;
-					sequencePosition = 0;
-				} else {
-					while (charPosition < line.length()) {
-						char c = line.charAt(charPosition++);
-						switch (c) {
-						case 'a':
-							sequence = ((sequence<<2) | CODE_A);
-							if (sequencePosition < sequenceLength) sequencePosition++;
-							break;
-						case 't':
-							sequence = ((sequence<<2) | CODE_T);
-							if (sequencePosition < sequenceLength) sequencePosition++;
-							break;
-						case 'c':
-							sequence = ((sequence<<2) | CODE_C);
-							if (sequencePosition < sequenceLength) sequencePosition++;
-							break;
-						case 'g':
-							sequence = ((sequence<<2) | CODE_G);
-							if (sequencePosition < sequenceLength) sequencePosition++;
-							break;
-						case 'n':
-							sequencePosition = 0;
-							sequence = 0;
-							continue;
-						default: //none of the above
-							continue;
-						}
-						if (sequencePosition >= sequenceLength) {
-							tree.BTreeInsert(sequence & (~(0xffffffffffffffffL<<(sequenceLength<<1))));
-						}
-					}
-				}
-			} else if (line.startsWith("ORIGIN")) {
-				inSequence = true;
 			}
 			line = in.readLine();
 			charPosition = 0;
