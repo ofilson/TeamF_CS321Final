@@ -1,5 +1,9 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 /**
@@ -9,113 +13,143 @@ import java.util.Scanner;
  *
  */
 public class GeneBankCreateBTree {
-	public static void main(String args[]) {
-		//Instance Variables
-		String has_Cache = "", input_degree = "", gbkFileName = "", input_seq_length = "", input_cache_size = "", debug_level = "";
-		int degree, seq_length,cache_size,degree_level;
-		//Args Parsing
-		has_Cache = args[0]; input_degree = args[1];
-		
-		gbkFileName = args[2]; input_seq_length = args[3]; 
-		
-		input_cache_size = args[4]; debug_level = args[5];
-		
-		if(has_Cache == "1") {
-			cache_size = Integer.valueOf(input_cache_size);
+
+	public static final long CODE_A = 0b00L;
+	public static final long CODE_T = 0b11L;
+	public static final long CODE_C = 0b01L;
+	public static final long CODE_G = 0b10L;
+
+	public static final int MAX_SEQUENCE_LENGTH = 31;
+	public static final int MAX_DEBUG_LEVEL = 1;
+	
+	public static void main(String[] args) throws IOException {
+
+		if (args.length < 4) {
+			badUsage();
 		}
 
-		degree = Integer.valueOf(input_degree);
-		File file = new File(gbkFileName);
-		seq_length = Integer.valueOf(input_seq_length);
+		// cache
+		boolean useCache = false;
 
-		if(!(seq_length <= 31) && !(seq_length >= 1)){ //Makes sure that the seq_length is between 1 and 31
-			throw new IndexOutOfBoundsException();
+		try {
+			int c = Integer.parseInt(args[0]);
+			if (c == 0) useCache = false;
+			else if (c == 1) useCache = true;
+			else badUsage();
+		} catch (NumberFormatException e) {
+			badUsage();
 		}
 
-		ArrayList<String> seqList = new ArrayList<String>(); //Holds all sequences (sometimes there are more than one in a gbk file.)
+		// degree
+		int BTreeDegree = 0;
 
+		try {
+			int deg = Integer.parseInt(args[1]);
+			if (deg < 0) badUsage();
+			else if (deg == 0) BTreeDegree = getOptimalDegree();
+			else BTreeDegree = deg;
+		} catch (NumberFormatException e) {
+			badUsage();
+		}
+		int sequenceLength = 0;
+
+		// sequence length
+		try {
+			int len = Integer.parseInt(args[3]);
+			if (len < 1 || len > MAX_SEQUENCE_LENGTH) badUsage();
+			else sequenceLength = len;
+		} catch (NumberFormatException e) {
+			badUsage();
+		}
 		
-		try { //Navigates through given .gbk file and places full sequences in seqList as strings.
-			Scanner fileScan = new Scanner(file);
-			while(fileScan.hasNextLine()){
-				String line = fileScan.nextLine();
-				if(line.contains("ORIGIN")){ //Finds sequence beginning
-					StringBuilder seq = new StringBuilder();
-					line = fileScan.nextLine();
-					while(!line.contains("//")){ //Stops at //
-						Scanner lineScan = new Scanner(line);
 
-						while(lineScan.hasNext()){
-							if(lineScan.hasNextInt()){	// This removes line numbers at beginning of the line
-								lineScan.next();		
-							}							
-							String val = lineScan.next(); //Grabs next 8 characters
-							if(!val.contains("N") && !val.contains("n")){ //If 8 char sequence doens't contain n
-								seq.append(val); //Add to sequence
-							} else { //If it does contain an n
-								while(val.contains("n")){ //gets rid of all lowercase n's
-									String part1 = val.substring(0, val.indexOf("n"));
-									String part2 = val.substring(val.indexOf("n") + 1, val.length());
-									val = part1 + part2;
-								}
-								while(val.contains("N")){ //gets rid of all uppercast N's
-									String part1 = val.substring(0, val.indexOf("N"));
-									String part2 = val.substring(val.indexOf("N") + 1, val.length());
-									val = part1 + part2;
-								}
-								seq.append(val); //Adds remainder of 8 char sequence that isn't an n to sequence.
-							}
-						}
-						line = fileScan.nextLine();
-						lineScan.close();
-					}
-					seqList.add(seq.toString()); //Sequence added to list of sequences.
-					//System.out.println(seq.toString()); //Print for debugging pruposes
+		// cache and debug level
+		int cacheSize = 0;
+		int debugLevel = 0;
+
+		if (args.length > 4) {
+			if (useCache) {
+				try {
+					int csize = Integer.parseInt(args[4]);
+					if (csize < 1) badUsage();
+					else cacheSize = csize;
+				} catch (NumberFormatException e) {
+					badUsage();
 				}
 			}
-			fileScan.close();
+			if (!useCache || args.length > 5) {
+				try {
+					int dlevel = Integer.parseInt(useCache ? args[5] : args[4]);
+					if (dlevel < 0 || dlevel > MAX_DEBUG_LEVEL) badUsage();
+					else debugLevel = dlevel;
+				} catch (NumberFormatException e) {
+					badUsage();
+				}
+			}
+		}
+
+		// genebank file
+		File gbk = new File(args[2]);
+
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new FileReader(gbk));
+
 		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found");
+			System.err.println("File not found: " + gbk.getPath());
 		}
+		String BTreeFile = (gbk + ".btree.data." + sequenceLength + "." + BTreeDegree);
+		BTree tree = new BTree(BTreeDegree, BTreeFile, useCache, cacheSize);
 
-		ArrayList<BTree> treeList = new ArrayList<BTree>();					//Basically seqList except for their BTree version
+		String line = null;
+		line = in.readLine().toLowerCase().trim();
+		boolean inSequence = false;
+		int sequencePosition = 0;
+		int charPosition = 0;
+		long sequence = 0L;
 
-		//Creating the BTree nodes
-		for(int i = 0; i < seqList.size(); i++) { //For every full sequence in our seqlist (shouldn't be many)
-			String fullSeq = seqList.get(i);
-			int start = 0; 
-			int finish = seq_length;
-			String fileName = gbkFileName + "btree.data" + seq_length + degree;
-			BTree tree = new BTree(degree, fileName); //Make a new BTree
-
-			while(finish < fullSeq.length()) { //This is a big one, increments start and finish by one until we've got subsequences of length m for the whole array
-				long output;
-				String outputString = "+";
-				String initialString = fullSeq.substring(start, finish);
-				for(int y = 0; y < initialString.length(); y++){ //Converts the subsequence into a binary long, runs less than 31 times
-					char base = initialString.charAt(y);
-					if(base == 'a') {
-						outputString += "00";
-					} else if (base == 't') {
-						outputString += "11";
-					} else if (base == 'c') {
-						outputString += "01";
-					} else if (base == 'g') {
-						outputString += "10";
-					} else {
-						throw new IndexOutOfBoundsException();
-					}
-				}
-				output = Long.parseLong(outputString,2); 		//Turns String into binary long
-				tree.BTreeInsert(output); 						//adds long to the BTree
-				start++;										//Increment start and finish
-				finish++;
 			}
-			treeList.add(tree);									//Add the tree to the list of trees (one tree per full sequence)
+			line = in.readLine();
+			charPosition = 0;
 		}
 
+		if (debugLevel > 0) {
+			File dumpFile = new File("dump");
+			dumpFile.delete();
+			dumpFile.createNewFile();
+			PrintWriter writer = new PrintWriter(dumpFile);
+			tree.inOrderPrintToWriter(tree.getRoot(),writer,sequenceLength);
+			writer.close();
+		}
+		System.out.println("done");
+		if (useCache) tree.flushCache();
+		in.close();
 	}
+	
 
+	private static void badUsage() {
+		System.err.println("Usage: java GeneBankCreateBTree <cache> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
+		System.err.println("<cache>: 0/1 (no cache/cache)");
+		System.err.println("<degree>: degree of the BTree (0 for default)");
+		System.err.println("<gbk file>: GeneBank file");
+		System.err.println("<sequence length>: 1-31");
+		System.err.println("[<cache size>]: size of cache, optional");
+		System.err.println("[<debug level>]: 0/1 (no/yes)");
+		System.exit(1);
+	}
+	public static int getOptimalDegree(){
+		double optimum;
+		int sizeOfPointer = 4;
+		int sizeOfObject = 12;
+		int sizeOfMetadata = 5;
+		optimum = 4096;
+		optimum += sizeOfObject;
+		optimum -= sizeOfPointer;
+		optimum -= sizeOfMetadata;
+		optimum /= (2 * (sizeOfObject + sizeOfPointer));
+		return (int) Math.floor(optimum);
+	}
 }
+
 
 
