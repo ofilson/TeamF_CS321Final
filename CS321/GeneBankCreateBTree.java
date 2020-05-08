@@ -25,7 +25,7 @@ public class GeneBankCreateBTree {
 	public static void main(String[] args) throws IOException {
 
 		if (args.length < 4) {
-			badUsage();
+			printUsage();
 		}
 
 		// cache
@@ -35,9 +35,9 @@ public class GeneBankCreateBTree {
 			int c = Integer.parseInt(args[0]);
 			if (c == 0) useCache = false;
 			else if (c == 1) useCache = true;
-			else badUsage();
+			else printUsage();
 		} catch (NumberFormatException e) {
-			badUsage();
+			printUsage();
 		}
 
 		// degree
@@ -45,21 +45,21 @@ public class GeneBankCreateBTree {
 
 		try {
 			int deg = Integer.parseInt(args[1]);
-			if (deg < 0) badUsage();
+			if (deg < 0) printUsage();
 			else if (deg == 0) BTreeDegree = getOptimalDegree();
 			else BTreeDegree = deg;
 		} catch (NumberFormatException e) {
-			badUsage();
+			printUsage();
 		}
 		int sequenceLength = 0;
 
 		// sequence length
 		try {
 			int len = Integer.parseInt(args[3]);
-			if (len < 1 || len > MAX_SEQUENCE_LENGTH) badUsage();
+			if (len < 1 || len > MAX_SEQUENCE_LENGTH) printUsage();
 			else sequenceLength = len;
 		} catch (NumberFormatException e) {
-			badUsage();
+			printUsage();
 		}
 		
 
@@ -71,19 +71,19 @@ public class GeneBankCreateBTree {
 			if (useCache) {
 				try {
 					int csize = Integer.parseInt(args[4]);
-					if (csize < 1) badUsage();
+					if (csize < 1) printUsage();
 					else cacheSize = csize;
 				} catch (NumberFormatException e) {
-					badUsage();
+					printUsage();
 				}
 			}
 			if (!useCache || args.length > 5) {
 				try {
 					int dlevel = Integer.parseInt(useCache ? args[5] : args[4]);
-					if (dlevel < 0 || dlevel > MAX_DEBUG_LEVEL) badUsage();
+					if (dlevel < 0 || dlevel > MAX_DEBUG_LEVEL) printUsage();
 					else debugLevel = dlevel;
 				} catch (NumberFormatException e) {
-					badUsage();
+					printUsage();
 				}
 			}
 		}
@@ -109,6 +109,8 @@ public class GeneBankCreateBTree {
 		int charPosition = 0;
 		long sequence = 0L;
 
+		//Missing code I think
+
 		if (debugLevel > 0) {
 			File dumpFile = new File("dump");
 			dumpFile.delete();
@@ -126,7 +128,7 @@ public class GeneBankCreateBTree {
 	 * Called when the arguments do not fit what is expected. 
 	 * Prints out the correct argument usage to the console. 
 	 */
-	private static void badUsage() {
+	private static void printUsage() {
 		System.err.println("Usage: java GeneBankCreateBTree <cache> <degree> <gbk file> <sequence length> [<cache size>] [<debuglevel>]");
 		System.err.println("<cache>: 0/1 (no cache/cache)");
 		System.err.println("<degree>: degree of the BTree (0 for default)");

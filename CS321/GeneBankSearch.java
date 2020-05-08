@@ -52,6 +52,7 @@ public class GeneBankSearch {
 
 		int degree = Integer.parseInt(deg);
 		
+		//
 		try {
 			GeneBankConvert gbc = new GeneBankConvert();
 			BTree tree = new BTree(degree, new File(btreeFile), useCache, cacheSize);
@@ -63,8 +64,9 @@ public class GeneBankSearch {
 				long q = gbc.convertStringToLong(query);
 				BTreeObject result = tree.search(tree.getRoot(), q);
 				
-				if(result != null) 
+				if(result != null) {
 					System.out.println(gbc.convertLongToString(result.getData(), Integer.parseInt(seq))+": "+ result.getFreq());
+				}
 			}
 			
 			scan.close();
@@ -73,14 +75,28 @@ public class GeneBankSearch {
 		}
 	}
 
+	/**
+	 * Recursively calls itself to return a reversed version of the argument string
+	 * @param s - String to reverse
+	 * @return - Reversed String of parameter s
+	 */
 	private static String reverseString(String s) {
 		if(s.length() == 1)
 			return s;
 		return "" + s.charAt(s.length() - 1) + reverseString(s.substring(0, s.length() - 1));
 	}
 
+	/**
+	 * Called when the arguments do not fit what is expected. 
+	 * Prints out the correct argument usage to the console. 
+	 */
 	private static void printUsage() {
-		System.err.println("Usage: java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]\n");
+		System.err.println("Usage: java GeneBankSearch <cache)> <btree file> <query file> [<cache size>] [<debug level>]\n");
+		System.err.println("<cache>: 0/1 (no cache/cache)");
+		System.err.println("<btree file>: file containing the BTree.");
+		System.err.println("<query file>: file containing the sequences to search the BTree for");
+		System.err.println("[<cache size>]: size of cache if one is being used, optional");
+		System.err.println("[<debug level>]: 0 if debug is wanted.");
 		System.exit(1); 
 	}
 }
